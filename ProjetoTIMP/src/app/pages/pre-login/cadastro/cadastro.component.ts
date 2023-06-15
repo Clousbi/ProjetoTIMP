@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { CominucacaoService } from 'src/app/shared/service/cominucacao.service';
 import { SessionService } from 'src/app/shared/service/session.service';
 
 
@@ -29,7 +30,8 @@ export class CadastroComponent implements OnInit {
   constructor(
     private session: SessionService,
     private router: Router,
-  ) {}
+    private comu: CominucacaoService
+  ) { }
 
   ngOnInit(): void {
     $('#login-indisponivel').css('display', 'none');
@@ -55,10 +57,13 @@ export class CadastroComponent implements OnInit {
   registrar() {
     if (this.cadastroOk) {
       if (this.senha == this.confirmaSenha) {
+        this.comu.filter('loading');
         this.session.cadastrar(this.nome, this.email, this.senha, this.data_nasc, this.login).subscribe((data: any) => {
           if (data.status == 'success') {
+            this.comu.filter('loaded');
             this.router.navigate(['/login'])
           }
+          else this.comu.filter('loaded');
         });
       }
     }
